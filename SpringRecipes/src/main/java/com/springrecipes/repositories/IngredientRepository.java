@@ -1,11 +1,10 @@
 package com.springrecipes.repositories;
 
-import java.util.Optional;
-
-import org.springframework.data.repository.CrudRepository;
-
 import com.springrecipes.model.Ingredient;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IngredientRepository extends CrudRepository<Ingredient, Long>{
-	Optional<Ingredient> findByRecipeId(Long id);
+import java.util.List;
+
+public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
+    List<Ingredient> findByRecipeId(Long id);
 }

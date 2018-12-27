@@ -1,16 +1,17 @@
 package com.springrecipes.service;
 
-import java.util.Optional;
-import java.util.Set;
+import com.springrecipes.dto.RecipeDto;
 
-import com.springrecipes.model.Recipe;
+import java.util.List;
 
 public interface RecipeService {
-	Set<Recipe> getRecipes();
+	List<RecipeDto> getRecipes();
 	
-	Optional<Recipe> findById(Long id);
+	RecipeDto findById(Long id);
 	
+	RecipeDto save(RecipeDto recipeDto);
+
+	RecipeDto saveRecipeByDto(Long id, RecipeDto recipeDto);
+
 	void deleteById(Long id);
-	
-	Recipe save(Recipe recipe);
 }

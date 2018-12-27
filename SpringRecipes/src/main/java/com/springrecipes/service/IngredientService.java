@@ -1,17 +1,16 @@
 package com.springrecipes.service;
 
-import java.util.Optional;
+import com.springrecipes.dto.IngredientDto;
 
-import com.springrecipes.model.Ingredient;
+import java.util.List;
 
 public interface IngredientService {
 
-	Ingredient save(Ingredient ingredient);
-	
-	Optional<Ingredient> findById(Long id);
-	
-	void delete(Ingredient ingredient);
-	
-	Optional<Ingredient> findByRecipeId(Long id);
+	List<IngredientDto> findByRecipeId(Long id);
 
+	IngredientDto save(IngredientDto ingredientDto);
+
+	IngredientDto saveIngredientByDto(Long id, IngredientDto ingredientDto);
+	
+	void deleteById(Long id);
 }

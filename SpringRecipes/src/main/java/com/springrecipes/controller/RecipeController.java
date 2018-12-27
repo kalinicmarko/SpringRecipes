@@ -1,28 +1,18 @@
 package com.springrecipes.controller;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.Set;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
+import com.springrecipes.dto.RecipeDto;
 import com.springrecipes.exceptions.RecipeNotFoundException;
-import com.springrecipes.model.Recipe;
 import com.springrecipes.service.RecipeService;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Log4j2
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/recipes")
 public class RecipeController {
-	
+
 	private final RecipeService recipeService;
 
 	public RecipeController(RecipeService recipeService) {
@@ -30,53 +20,47 @@ public class RecipeController {
 		this.recipeService = recipeService;
 	}
 	
-	@GetMapping("recipes")
-	public Set<Recipe> getAll(){
-		return recipeService.getRecipes();
+	@GetMapping
+	public List<RecipeDto> getAll(){
+
+		List<RecipeDto> recipes = recipeService.getRecipes();
+		log.debug("getAll() " +recipes);
+		return recipes;
 	}
 	
-	@GetMapping("recipes/{id}")
-	public Optional<Recipe> getRecipeById(@PathVariable Long id) {
-		
-		Optional<Recipe> recipe = recipeService.findById(id);
-		
-		if(!recipe.isPresent()) {
-			throw new RecipeNotFoundException("id-" +id);
-		}
+	@GetMapping("{id}")
+	public RecipeDto getRecipeById(@PathVariable Long id) {
+
+		RecipeDto recipe = recipeService.findById(id);
+		log.debug("getRecipeById() " +recipe);
+		return recipe;
+	}
+
+	@PostMapping
+	public RecipeDto createRecipe(@RequestBody RecipeDto recipeDto){
+
+		RecipeDto recipe = recipeService.save(recipeDto);
+		log.debug("Recipe created: " +recipe);
+		log.info("Recipe created");
 		return recipe;
 	}
 	
-	@PostMapping("/recipes")
-	public ResponseEntity<Object> createRecipe(@RequestBody Recipe recipe) {
-		Recipe savedRecipe = recipeService.save(recipe);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}").buildAndExpand(savedRecipe.getId()).toUri();		
-		
-		return ResponseEntity.created(location).build();
+	@PutMapping("{id}")
+	public RecipeDto updateRecipe(@RequestBody RecipeDto recipeDto, @PathVariable Long id) {
+
+		RecipeDto recipe = recipeService.saveRecipeByDto(id, recipeDto);
+		log.debug("Updated recipe: " +recipe);
+		log.info("Recipe updated");
+		return recipe;
 	}
 	
-	@PutMapping("/recipes/{id}")
-	public Optional<Recipe> updateRecipe(@RequestBody Recipe recipeUpdated, @PathVariable Long id) {
-		
-		Optional<Recipe> recipeOptional = recipeService.findById(id).map(recipe -> {
-			recipe.setDescription(recipeUpdated.getDescription());
-			recipe.setName(recipeUpdated.getName());
-			recipe.setCookTime(recipeUpdated.getCookTime());
-			recipe.setDifficulty(recipeUpdated.getDifficulty());
-			recipe.setPropTime(recipeUpdated.getPropTime());
-			recipe.setNote(recipeUpdated.getNote());
-			recipe.setCategories(recipeUpdated.getCategories());
-			return recipeService.save(recipe);
-		});
-		
-		if(!recipeOptional.isPresent()) {
-			throw new RecipeNotFoundException("id-" +id);
-		}
-		return recipeOptional;
-	}
-	
-	@DeleteMapping("recipes/{id}")
+	@DeleteMapping("{id}")
 	public void delete(@PathVariable Long id) {
-		recipeService.deleteById(id);
+		try {
+			recipeService.deleteById(id);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			throw new RecipeNotFoundException("Recipe not found");
+		}
 	}
 }
