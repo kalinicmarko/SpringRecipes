@@ -10,5 +10,4 @@ public class CategoryDto {
 
 	Long id;
 	String name;
-	/*List<RecipeDto> recipes;*/
 }

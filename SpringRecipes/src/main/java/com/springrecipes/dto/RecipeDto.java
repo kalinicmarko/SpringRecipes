@@ -19,6 +19,6 @@ public class RecipeDto {
 	NoteDto note;
 	Difficulty dificulty;
 	List<IngredientDto> ingredients;
-	/*List<CategoryDto> categories;*/
+	List<CategoryDto> categories;
 	
 }
