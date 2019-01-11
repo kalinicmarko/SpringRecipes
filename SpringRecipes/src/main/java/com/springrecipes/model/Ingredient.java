@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@ToString(exclude = "recipe")
-@EqualsAndHashCode(exclude = "recipe")
+@ToString(exclude = {"recipe","unitOfMeasure"})
+@EqualsAndHashCode(exclude = {"recipe","unitOfMeasure"})
 public class Ingredient {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -22,10 +22,10 @@ public class Ingredient {
 
 	@Column(name = "amount")
 	private BigDecimal amount;
-	
+
 	@ManyToOne
 	private Recipe recipe;
 
-	@OneToOne
-	private UnitOfMeasure uom;
+	@ManyToOne
+	private UnitOfMeasure unitOfMeasure;
 }

@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface IngredientService {
 
+	IngredientDto findById(Long id);
+
 	List<IngredientDto> findByRecipeId(Long id);
 
 	IngredientDto save(IngredientDto ingredientDto);

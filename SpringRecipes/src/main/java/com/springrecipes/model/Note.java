@@ -13,6 +13,7 @@ public class Note {
 	private Long id;
 
 	@Column(name = "description")
+	@Lob
 	private String description;
 
 }

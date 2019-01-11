@@ -6,6 +6,7 @@ import com.springrecipes.mapper.RecipeMapper;
 import com.springrecipes.model.Recipe;
 import com.springrecipes.repositories.RecipeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +24,13 @@ public class RecipeServiceImpl implements RecipeService {
 		this.recipeMapper = recipeMapper;
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public List<RecipeDto> getRecipes() {
 		return recipeRepository.findAll().stream().map(recipeMapper::recipeToRecipeDto).collect(Collectors.toList());
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public RecipeDto findById(Long id) {
 		return recipeRepository.findById(id)
@@ -35,6 +38,7 @@ public class RecipeServiceImpl implements RecipeService {
 				.orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
 	}
 
+	@Transactional
 	@Override
 	public RecipeDto save(RecipeDto recipeDto) {
 		Recipe recipe = recipeMapper.recipeDtoToRecipe(recipeDto);
@@ -43,8 +47,10 @@ public class RecipeServiceImpl implements RecipeService {
 		return recipeMapper.recipeToRecipeDto(savedRecipe);
 	}
 
+	@Transactional
 	@Override
 	public RecipeDto saveRecipeByDto(Long id, RecipeDto recipeDto) {
+
 		Recipe recipe = recipeMapper.recipeDtoToRecipe(recipeDto);
 		recipe.setId(id);
 
@@ -53,8 +59,10 @@ public class RecipeServiceImpl implements RecipeService {
 		return recipeMapper.recipeToRecipeDto(savedRecipe);
 	}
 
+	@Transactional
 	@Override
 	public void deleteById(Long id) {
+		findById(id);
 		recipeRepository.deleteById(id);
 	}
 }
